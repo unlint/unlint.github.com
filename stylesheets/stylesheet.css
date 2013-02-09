@@ -94,6 +94,11 @@ header h2 {
   margin: 0 auto;
 }
 
+.inner-long {
+  width: 90%;
+  margin: auto;
+}
+
 #container .inner img {
   max-width: 100%;
 }
