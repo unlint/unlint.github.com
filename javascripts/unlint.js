@@ -1,6 +1,6 @@
 var sockUrl = 'http://91.228.153.235:8000/unlint';
 // var sockUrl = 'http://127.0.0.1:8000/unlint';
-var reChanges = new RegExp("https://github.com/(.*)/(.*)/pull/(.*)/*");
+var reChanges = new RegExp("https://github.com/(.*)/(.*)/pull/([^/]*)/*");
 var transport = undefined;
 
 function getParameter(name) {
