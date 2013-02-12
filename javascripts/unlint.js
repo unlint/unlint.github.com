@@ -65,7 +65,7 @@ function changes(data, options) {
 	var rawfiles = [];
 	
 	for (var index=0; index<data.length; ++index) {
-		files.push(data[index].filename);
+        files.push(data[index].filename);
 		rawfiles.push(data[index].raw_url);
 	}
 	
@@ -77,22 +77,49 @@ function changes(data, options) {
         $('.changes-container').html(content);
     });
 
-    for (var index = 0; index < files.length; ++index) {
-    	var filename = files[index];
-    	var raw = rawfiles[index];
-    	
-    	var callback = (function (filename, raw) {
-			return function (source) {
-    			transport.analyze(filename, source, raw, analyze);
-    		}
-		})(filename, raw);
-    	
-        transport.download({
-    		url: raw,
-    		username: options.username,
-    		password: options.password,
-    		callback: callback
-    	});
+    analyzeInSequence(_.clone(files), _.clone(rawfiles), options);
+}
+
+function analyzeInSequence(files, rawfiles, options) {
+    if (files.length == 0 || rawfiles.length == 0) {
+        transport.close();
+        transport = undefined;
+        return;
+    }
+
+    var file = files.shift();
+    var raw = rawfiles.shift();
+
+    var callback = (function (filename, raw) {
+        return function (source) {
+            $("a[href='#" + file + "']>div").html('<span style="color: blue;">(2/3) Analyzing, please wait...</span>');
+
+            transport.analyze(filename, source, raw, function(filename, source, raw, data) {
+                analyze(filename, source, raw, data);
+
+                setTimeout(function() {
+                    analyzeInSequence(files, rawfiles, options);
+                }, 100);
+            });
+        }
+    })(file, raw);
+
+    $("a[href='#" + file + "']>div").html('<span style="color: blue;">(1/3) Downloading, please wait...</span>');
+
+    transport.download({
+        url: raw,
+        username: options.username,
+        password: options.password,
+        callback: callback
+    });
+}
+
+function analyze(filename, source, raw, data) {
+    if (data === 'not checked') {
+        renderSimpleAdvice(filename, source, data, raw);
+    } else {
+        var xml = $.parseXML(data);
+        renderAdvice(filename, source, $(xml), raw);
     }
 }
 
@@ -157,13 +184,4 @@ function toggleAuthBlock() {
 
 function makeChangesUrl(match) {
     return "https://api.github.com/repos/" + match[1] + "/" + match[2] + "/pulls/" + match[3] + "/files";
-}
-
-function analyze(filename, source, raw, data) {
-    if (data === 'not checked') {
-        renderSimpleAdvice(filename, source, data, raw);
-    } else {
-        var xml = $.parseXML(data);
-        renderAdvice(filename, source, $(xml), raw);
-    }
 }
