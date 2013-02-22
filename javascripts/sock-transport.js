@@ -27,11 +27,11 @@ var SockTransport = function (sockurl, whenReady) {
         this.socket.close();
     }
 
-    this.download = function (options) {
+    this.download = function (action, options) {
         var uuid = this.nextUUID();
         var request = JSON.stringify({
             uuid: uuid,
-            action: 'proxy',
+            action: action,
             data: JSON.stringify({
                 url: options.url,
                 username: options.username,

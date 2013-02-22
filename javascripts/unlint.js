@@ -1,5 +1,5 @@
 var sockUrl = 'http://91.228.153.235:8000/unlint';
-// var sockUrl = 'http://127.0.0.1:8000/unlint';
+//var sockUrl = 'http://127.0.0.1:8000/unlint';
 var reChanges = new RegExp("https://github.com/(.*)/(.*)/pull/([^/]*)/*");
 var transport = undefined;
 
@@ -18,16 +18,11 @@ function unlint() {
     }
 
     if (!transport) {
-    // if (options.username.length > 0 && options.password > 0) {
         transport = new SockTransport(sockUrl, function() {
             inspect(options);
         });
-    // } else {
-        // transport = new JsonpTransport(sockUrl);
-        // inspect(options);
-    // }
     } else {
-        inspect(options);
+        throw new Error("Unexcepted behaviour");
     }
 }
 
@@ -36,7 +31,7 @@ function inspect(options) {
     
     if (match) {
     	var changesUrl = makeChangesUrl(match);
-    	transport.download({
+    	transport.download('changes', {
     		url: changesUrl,
     		username: options.username,
     		password: options.password,
@@ -106,7 +101,7 @@ function analyzeInSequence(files, rawfiles, options) {
 
     $("a[href='#" + file + "']>div").html('<span style="color: blue;">(1/3) Downloading, please wait...</span>');
 
-    transport.download({
+    transport.download('raw', {
         url: raw,
         username: options.username,
         password: options.password,
@@ -115,11 +110,11 @@ function analyzeInSequence(files, rawfiles, options) {
 }
 
 function analyze(filename, source, raw, data) {
-    if (data === 'not checked') {
-        renderSimpleAdvice(filename, source, data, raw);
-    } else {
+    if (data.indexOf('<advice>') == 0) {
         var xml = $.parseXML(data);
-        renderAdvice(filename, source, $(xml), raw);
+        renderAdvice(filename, source, $(xml), raw);        
+    } else {
+        renderSimpleAdvice(filename, source, data, raw);
     }
 }
 
@@ -145,13 +140,17 @@ function renderAdvice(filename, source, xml, raw) {
     for (var i = 0; i < nodes.length; ++i) {
         var error = nodes[i];
         var lineError = asObject(error.attributes);
-        var lineNumber = parseInt(lineError['line']);
+        var lines = lineError['line'].split(',');
+        
+        for (var j = 0; j < lines.length; ++j) {
+            var lineNumber = parseInt(lines[j]);
+        
+            if (!errors[lineNumber]) {
+                errors[lineNumber] = [];
+            }
 
-        if (!errors[lineNumber]) {
-            errors[lineNumber] = [];
+            errors[lineNumber].push(lineError);
         }
-
-        errors[lineNumber].push(lineError);
     }
 
     Templates.get("templates/advices.tmpl", function(template) {
