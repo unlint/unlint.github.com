@@ -21,7 +21,7 @@
 
         <header>
           <h1>unlint.github.com</h1>
-          <h2></h2>
+          <h2>complex lint tool for github</h2>
         </header>
 
         <hr>
@@ -29,7 +29,7 @@
         <section id="main_content">
           <h3>Welcome to unlint.github.com</h3>
 
-          <p>This automatic linter is the easiest way to validate code style in any pull request on github. Simply paste url of pull request in form below and press <code>Advice</code> button to see you results.</p>
+          <p>This automatic linter is the easiest way to validate code style in any pull request on github. Simply paste url of pull request in form below and press <code>Advice</code> button to see you results. Also you can configure <a href="advanced.html#hook">Post-Receive Hooks</a> on github.</p> 
 
           <form class="form-horizontal" action="advice.html" method="GET">
               <div class="control-group">
@@ -40,7 +40,7 @@
               </div>
               <div class="control-group">
                   <div class="controls">
-                      <a style="cursor: pointer; border-bottom: 1px dashed;" onclick="toggleAuthBlock()">With authentication (unsafe)</a>
+                      <a style="cursor: pointer; border-bottom: 1px dashed;" onclick="toggleAuthBlock()">With authentication</a>
                   </div>
               </div>
               <div class="control-group auth-block">
