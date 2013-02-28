@@ -29,9 +29,9 @@
         <section id="main_content">
           <h3>Welcome to unlint.github.com</h3>
 
-          <p>This automatic linter is the easiest way to validate code style in any pull request on github. Simply paste url of pull request in form below and press <code>Advice</code> button to see you results. Also you can configure <a href="advanced.html#hook">Post-Receive Hooks</a> on github.</p> 
+          <p>This automatic linter is the easiest way to validate code style in any pull request on github. Simply paste url of pull request in form below and press <code>Advice</code> button to see you results. Also you can configure Post-Receive Hooks on github (<a href="advanced.html#hook">read how</a>).</p> 
 
-          <form class="form-horizontal" action="advice.html" method="GET">
+          <form class="form-horizontal" action="http://unlint.org/report/byurl" method="POST">
               <div class="control-group">
                   <label class="control-label" for="url">URL</label>
                   <div class="controls">
@@ -40,21 +40,15 @@
               </div>
               <div class="control-group">
                   <div class="controls">
-                      <a style="cursor: pointer; border-bottom: 1px dashed;" onclick="toggleAuthBlock()">With authentication</a>
+                      <a style="cursor: pointer; border-bottom: 1px dashed;" onclick="toggleAuthBlock()">Private repository</a>
                   </div>
               </div>
               <div class="control-group auth-block">
-                  <label class="control-label" for="username">Username</label>
+                  <label class="control-label" for="token">Token <br/>(<a href="advanced.html#token">help</a>)</label>
                   <div class="controls">
-                      <input name="username" type="text" value="" class="span2"/>
+                      <input name="token" type="text" value="" class="span6"/>
                   </div>
               </div>
-              <div class="control-group auth-block">
-                  <label class="control-label" for="password">Password</label>
-                  <div class="controls">
-                      <input name="password" type="password" value="" class="span2"/>
-                  </div>
-              </div>            
               <div class="control-group">
                   <div class="controls">
                       <button type="submit" class="btn">Advice</button>
